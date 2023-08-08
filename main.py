@@ -1,76 +1,48 @@
 import sqlite3
 
+# Step 1: Connect to the database (or create one if it doesn't exist)
+conn = sqlite3.connect("users.db")
 
-def create_users_table():
-    # Create a connection to the SQLite database
+# Step 2: Create a cursor object to execute SQL commands
+cursor = conn.cursor()
+
+# Step 3: Define the SQL command to create the 'users' table
+create_table_query = """
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL
+);
+"""
+
+# Step 4: Execute the SQL command to create the 'users' table
+cursor.execute(create_table_query)
+
+# Step 5: Commit the changes and close the connection
+conn.commit()
+conn.close()
+
+print("Database 'users.db' and table 'users' created successfully!")
+import sqlite3
+
+def create_user(username, password):
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
 
-    # Create a table to store user information
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL,
-        password TEXT NOT NULL
-    )
-    """)
+    # Safe way to execute a SQL query using parameters
+    insert_query = "INSERT INTO users (username, password) VALUES (?, ?)"
+    cursor.execute(insert_query, (username, password))
 
-    # Insert some sample data into the table
-    cursor.execute("INSERT INTO users (username, password) VALUES ('alice', 'password123')")
-    cursor.execute("INSERT INTO users (username, password) VALUES ('bob', 'qwerty')")
-    cursor.execute("INSERT INTO users (username, password) VALUES ('charlie', 'hello123')")
-
-    # Commit changes and close the connection
     conn.commit()
     conn.close()
 
+def main():
+    print("Welcome to the user registration system!")
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
 
-def login_vulnerable(username, password):
-    conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
+    create_user(username, password)
+    print("User registration successful!")
 
-    # Vulnerable SQL query (DO NOT USE THIS IN PRODUCTION!)
-    query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
-
-    cursor.execute(query)
-    user = cursor.fetchone()
-
-    conn.close()
-
-    return user
-
-
-def login_secure(username, password):
-    conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
-
-    # Secure SQL query using parameterized query
-    query = "SELECT * FROM users WHERE username=? AND password=?"
-    cursor.execute(query, (username, password))
-
-    user = cursor.fetchone()
-
-    conn.close()
-
-    return user
-
-
-# Create the 'users' table if it doesn't exist
-create_users_table()
-
-# Test the login functions
-username = input("Enter your username: ")
-password = input("Enter your password: ")
-
-user_vulnerable = login_vulnerable(username, password)
-user_secure = login_secure(username, password)
-
-if user_vulnerable:
-    print("Vulnerable Login: Login successful!")
-else:
-    print("Vulnerable Login: Invalid credentials. Login failed.")
-
-if user_secure:
-    print("Secure Login: Login successful!")
-else:
-    print("Secure Login: Invalid credentials. Login failed.")
+if __name__ == "__main__":
+    main()
