@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSRF Protection Example</title>
+</head>
+<body>
+    <h1>CSRF Protection Example</h1>
+    <form action="/process" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
