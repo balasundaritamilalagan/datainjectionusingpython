@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Injection Framework</title>
+</head>
+<body>
+    <h1>Data Injection Framework</h1>
+    <form method="POST" enctype="multipart/form-data" action="/upload">
+        <input type="file" name="file" accept=".csv">
+        <input type="submit" value="Upload">
+    </form>
+    <h2>Uploaded Data</h2>
+    <ul>
+        {% for entry in data %}
+            <li>{{ entry.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
